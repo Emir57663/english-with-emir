@@ -1,0 +1,126 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>English with Emir</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 0;
+      margin: 0;
+      background: linear-gradient(to bottom, #f0f0f0, #ffffff);
+    }
+    header {
+      background: #00274d;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .hero {
+      padding: 30px;
+      text-align: center;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg') no-repeat right top,
+                  url('https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg') no-repeat left top;
+      background-size: 100px, 100px;
+    }
+    .section {
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    .review-form {
+      background: #f9f9f9;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 10px;
+    }
+    .reviews {
+      margin-top: 20px;
+    }
+    .review {
+      background: #e0f7fa;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    footer {
+      background: #00274d;
+      color: white;
+      padding: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Английский с Эмиром</h1>
+    <p>Каждый день с 20:00 до 21:00 | Групповые - 500тг | Индивидуально - 1000тг</p>
+  </header>
+  <div class="hero">
+    <h2>Научу базовому английскому всех нуждающихся!</h2>
+  </div>  <div class="section">
+    <h3>Почему стоит выбрать меня?</h3>
+    <ul>
+      <li>Доступная цена</li>
+      <li>Понимающий подход</li>
+      <li>Реальные результаты</li>
+      <li>Удобное время занятий</li>
+    </ul>
+  </div>  <div class="section">
+    <h3>Оставьте отзыв:</h3>
+    <div class="review-form">
+      <input type="text" id="name" placeholder="Ваше имя" /><br /><br />
+      <textarea id="message" rows="4" placeholder="Ваш отзыв..."></textarea><br /><br />
+      <button onclick="submitReview()">Отправить</button>
+    </div>
+    <div class="reviews" id="reviews"></div>
+  </div>  <div class="section">
+    <h3>Связь со мной:</h3>
+    <p>WhatsApp: <a href="https://wa.me/77759937058">+7 775 993 7058</a></p>
+  </div>  <footer>
+    <p>&copy; 2025 English with Emir</p>
+  </footer>  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBI4sDk6T7g3A_VCUPbD3Uxpi7bXhMhWxc",
+      authDomain: "english-479ab.firebaseapp.com",
+      projectId: "english-479ab",
+      storageBucket: "english-479ab.firebasestorage.app",
+      messagingSenderId: "272843108657",
+      appId: "1:272843108657:web:9155e9c33e2ad68cef4010"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    function submitReview() {
+      const name = document.getElementById('name').value;
+      const message = document.getElementById('message').value;
+      if (name && message) {
+        db.collection("reviews").add({
+          name,
+          message,
+          timestamp: Date.now()
+        }).then(() => {
+          document.getElementById('name').value = '';
+          document.getElementById('message').value = '';
+          loadReviews();
+        });
+      }
+    }
+
+    function loadReviews() {
+      db.collection("reviews").orderBy("timestamp", "desc").onSnapshot(snapshot => {
+        const container = document.getElementById('reviews');
+        container.innerHTML = '';
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          container.innerHTML += `<div class="review"><strong>${data.name}</strong>: ${data.message}</div>`;
+        });
+      });
+    }
+
+    loadReviews();
+  </script></body>
+</html>
